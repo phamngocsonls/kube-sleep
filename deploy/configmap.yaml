@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kube-sleep
+data:
+  config.json: |
+    {"scale_up":"02:35","scale_down":"02:33","min_replicas":"0.1,2","target_namespace": "default","exclude_namespace": "kube-system","exclude_hpa": "nginx2_default","scale_up_delay":15,"scale_up_timeout":1800}

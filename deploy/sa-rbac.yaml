@@ -1,0 +1,62 @@
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  namespace: kube-sleep
+  name: kube-sleep
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kube-sleep-role
+rules:
+  - apiGroups:
+      - "autoscaling" # API group for HPA resources
+    resources:
+      - horizontalpodautoscalers
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+      - patch
+      
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kube-sleep-role-binding
+subjects:
+  - kind: ServiceAccount
+    name: kube-sleep
+    namespace: kube-sleep
+roleRef:
+  kind: ClusterRole
+  name: kube-sleep-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: kube-sleep-configmap-reader-writer
+  namespace: kube-sleep
+rules:
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get", "list", "watch", "create", "update", "patch"]
+  resourceNames: ["kube-sleep"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: kube-sleep-configmap-reader-writer-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: kube-sleep-configmap-reader-writer
+subjects:
+- kind: ServiceAccount
+  name: kube-sleep
+  namespace: kube-sleep

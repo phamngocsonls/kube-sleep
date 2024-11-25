@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-sleep
+  namespace: kube-sleep
+spec:
+  replicas: 1 
+  selector:
+    matchLabels:
+      app: kube-sleep
+  template:
+    metadata:
+      labels:
+        app: kube-sleep
+    spec:
+      volumes:
+        - name: config-data
+          configMap:
+            name: kube-sleep
+      serviceAccountName: kube-sleep
+      containers:
+      - name: kube-sleep
+        image: phamngocsonls/kube-sleep:v0.1
+        resources:
+          requests:
+            cpu: 10m
+            memory: 100M
+        volumeMounts:
+          - name: config-data
+            mountPath: /config
