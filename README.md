@@ -3,10 +3,10 @@
 <img src="https://raw.githubusercontent.com/phamngocsonls/kube-sleep/refs/heads/main/image/logo.png" width="210" height="200">
 
 ## Overview
-_kube-sleep_ is a simple script that automatically scale down K8S resources in during off-peak hours by change HPA `min_replicas` config. You can save infrastructure costs up to 25% with _kube-sleep_.
+_kube-sleep_ is a simple script that automatically scales down K8S resources in during off-peak hours by changing HPA `min_replicas` config. You can save infrastructure costs up to 25% with _kube-sleep_.
 
-## How it work?
-_kube-sleep_ schedule scale down and scale up your Deployment/StatefulSet by change HPA `min_replicas` config. _kube-sleep_ keeps HPA in configmap
+## How does it work?
+_kube-sleep_ schedule scale down and scale up your Deployment/StatefulSet by changing HPA `min_replicas` config. _kube-sleep_ keeps HPA in configmap
 ## Deployment
 
 To deploy *kube-sleep*:
