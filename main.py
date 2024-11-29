@@ -97,6 +97,8 @@ def scale_down(config_data):
     exclude_namespace = []
     exclude_hpa = []
     processed_list = []
+    target_hpa_namespace = []
+    target_hpa_namespace_adv = []
     hpas = get_all_hpas()
     config.load_incluster_config()
     v1 = client.CoreV1Api()
@@ -110,6 +112,14 @@ def scale_down(config_data):
         print(f"Error listing namespaces: {e.reason}")
         print(e.body)
     
+    if "target_hpa_namespace" in config_data:
+        target_hpa_namespace = config_data["target_hpa_namespace"].split(",")
+        if len(target_hpa_namespace) > 0:
+            for i in target_hpa_namespace:
+                temp = i.split("_")
+                if temp[1] not in target_hpa_namespace_adv:
+                    target_hpa_namespace_adv.append(temp[1])
+
     if "exclude_namespace" in config_data:
         exclude_namespace = config_data["exclude_namespace"].split(",")
     if config_data["target_namespace"] == "*": #all namespace:
@@ -123,6 +133,9 @@ def scale_down(config_data):
         namespace = hpa.split("_")[1]
 
         if namespace in target_namespace and namespace not in exclude_namespace and hpa not in exclude_hpa:
+            if namespace in target_hpa_namespace_adv: #check config target_hpa_namespace
+                if hpa not in target_hpa_namespace:
+                    continue
             min_rep_list = config_data['min_replicas'].split(",")
             if math.ceil(float(min_rep_list[0])*hpas[hpa]) < int(min_rep_list[1]):
                 target_scale = int(min_rep_list[1])
