@@ -99,6 +99,7 @@ def scale_down(config_data):
     processed_list = []
     target_hpa_namespace = []
     target_hpa_namespace_adv = []
+    exclude_day = []
     hpas = get_all_hpas()
     config.load_incluster_config()
     v1 = client.CoreV1Api()
@@ -112,6 +113,10 @@ def scale_down(config_data):
         print(f"Error listing namespaces: {e.reason}")
         print(e.body)
     
+    if "exclude_day" in config_data:
+        exclude_day = config_data["exclude_day"].split(",")
+    day_of_week = datetime.now(timezone.utc).strftime("%a")
+    day_of_month = datetime.now(timezone.utc).strftime("%d")
     if "target_hpa_namespace" in config_data:
         target_hpa_namespace = config_data["target_hpa_namespace"].split(",")
         if len(target_hpa_namespace) > 0:
@@ -132,7 +137,7 @@ def scale_down(config_data):
         hpa_name = hpa.split("_")[0]
         namespace = hpa.split("_")[1]
 
-        if namespace in target_namespace and namespace not in exclude_namespace and hpa not in exclude_hpa:
+        if namespace in target_namespace and namespace not in exclude_namespace and hpa not in exclude_hpa and day_of_month not in exclude_day and day_of_week not in exclude_day:
             if namespace in target_hpa_namespace_adv: #check config target_hpa_namespace
                 if hpa not in target_hpa_namespace:
                     continue
@@ -177,6 +182,7 @@ def scale_up(config_data):
         update_hpa_min_replicas(i.split("_")[0],i.split("_")[1],hpa_config[i])
         time.sleep(sleep_time)
         total_time+=sleep_time
+    add_file_to_configmap('kube-sleep', "kube-sleep", 'hpa.json', "{}") #clear config after scale up
 
 def main():
     while True:

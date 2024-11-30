@@ -4,4 +4,4 @@ metadata:
   name: kube-sleep
 data:
   config.json: |
-    {"scale_up":"02:35","scale_down":"02:33","min_replicas":"0.1,2","target_namespace": "default","target_hpa_namespace": "nginx_default","exclude_namespace": "*","exclude_hpa": "nginx2_default","scale_up_delay":15,"scale_up_timeout":1800}
+    {"scale_up":"02:35","scale_down":"02:33","exclude_day":"30,01,Sun","min_replicas":"0.1,2","target_namespace": "default","target_hpa_namespace": "nginx_default","exclude_namespace": "*","exclude_hpa": "nginx2_default","scale_up_delay":15,"scale_up_timeout":1800}
