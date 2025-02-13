@@ -20,7 +20,7 @@ spec:
       serviceAccountName: kube-sleep
       containers:
       - name: kube-sleep
-        image: phamngocsonls/kube-sleep:v0.1.2
+        image: phamngocsonls/kube-sleep:v0.13
         resources:
           requests:
             cpu: 10m
