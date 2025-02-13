@@ -114,25 +114,29 @@ def scale_down(config_data):
         print(e.body)
     
     if "exclude_day" in config_data:
-        exclude_day = config_data["exclude_day"].split(",")
+        if config_data["exclude_day"].find(",") > -1:
+            exclude_day = config_data["exclude_day"].split(",")
     day_of_week = datetime.now(timezone.utc).strftime("%a")
     day_of_month = datetime.now(timezone.utc).strftime("%d")
     if "target_hpa_namespace" in config_data:
-        target_hpa_namespace = config_data["target_hpa_namespace"].split(",")
-        if len(target_hpa_namespace) > 0:
-            for i in target_hpa_namespace:
-                temp = i.split("_")
-                if temp[1] not in target_hpa_namespace_adv:
-                    target_hpa_namespace_adv.append(temp[1])
+        if config_data["target_hpa_namespace"].find(",") > -1:
+            target_hpa_namespace = config_data["target_hpa_namespace"].split(",")
+            if len(target_hpa_namespace) > 0:
+                for i in target_hpa_namespace:
+                    temp = i.split("_")
+                    if temp[1] not in target_hpa_namespace_adv:
+                        target_hpa_namespace_adv.append(temp[1])
 
     if "exclude_namespace" in config_data:
-        exclude_namespace = config_data["exclude_namespace"].split(",")
+        if config_data["exclude_namespace"].find(",") > -1:
+            exclude_namespace = config_data["exclude_namespace"].split(",")
     if config_data["target_namespace"] == "*": #all namespace:
         target_namespace = namespace_list
     else:
         target_namespace = config_data["target_namespace"].split(",")
     if "exclude_hpa" in config_data:
-        exclude_hpa = config_data["exclude_hpa"].split(",")
+        if config_data["exclude_namespace"].find(",") > -1:
+            exclude_hpa = config_data["exclude_hpa"].split(",")
     for hpa in hpas:
         hpa_name = hpa.split("_")[0]
         namespace = hpa.split("_")[1]
@@ -169,7 +173,10 @@ def scale_down(config_data):
 
 def scale_up(config_data):
     configmap = read_configmap('kube-sleep','kube-sleep')
-    hpa_config = json.loads(configmap['hpa.json'].replace("'", "\""))
+    try:
+        hpa_config = json.loads(configmap['hpa.json'].replace("'", "\""))
+    except:
+        return
     sleep_time = config_data["scale_up_delay"]
     if len(hpa_config) == 0:
         return
