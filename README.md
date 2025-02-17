@@ -21,6 +21,7 @@ By change configmap  `kube-sleep` in namespace `kube-sleep`:
 {"scale_up":"10:35", #schedule scale up time. UTC timezone
 "scale_down":"02:33", #schedule scale down time. UTC timezone
 "exclude_day":"30,01,Sun", #exclude day of month or day of week
+"timedelta_hour": "7", #config timezone. =7 is utc+7. Default value is utc+0
 "min_replicas":"0.1,2", #keep 10% replica (math.ceil). But if 10% replica is lower than 2 -> min_replicas = 2 
 "target_namespace": "default", #target_namespace to scale down. use "*" to target all namespace. Use " default,default1" to target multi namespace
 "target_hpa_namespace": "nginx_default", #if target_namespace=default but in namespace default, only hpa name = nginx apply kube-sleep -> use this config
