@@ -2,7 +2,7 @@ import kubernetes
 from kubernetes import client, config
 import json
 import time
-from datetime import datetime,timezone
+from datetime import datetime,timezone,timedelta
 import math
 
 def read_configmap(name, namespace):
@@ -104,6 +104,7 @@ def scale_down(config_data):
     config.load_incluster_config()
     v1 = client.CoreV1Api()
     namespace_list = []
+    timedelta_hour = 0
     try:
         # Get the list of namespaces
         namespaces = v1.list_namespace()
@@ -116,8 +117,10 @@ def scale_down(config_data):
     if "exclude_day" in config_data:
         if config_data["exclude_day"].find(",") > -1:
             exclude_day = config_data["exclude_day"].split(",")
-    day_of_week = datetime.now(timezone.utc).strftime("%a")
-    day_of_month = datetime.now(timezone.utc).strftime("%d")
+    if "timedelta_hour" in config_data:
+        timedelta_hour = int(config_data["timedelta_hour"])
+    day_of_week = datetime.now(timezone(timedelta(hours=timedelta_hour))).strftime("%a")
+    day_of_month = datetime.now(timezone(timedelta(hours=timedelta_hour))).strftime("%d")
     if "target_hpa_namespace" in config_data:
         if config_data["target_hpa_namespace"].find(",") > -1:
             target_hpa_namespace = config_data["target_hpa_namespace"].split(",")
@@ -195,7 +198,7 @@ def main():
     while True:
         with open('./config/config.json', 'r') as file:
             config_data = json.load(file)
-        time_now = datetime.now(timezone.utc).strftime("%H:%M")
+        time_now = datetime.now(timezone(timedelta(hours=timedelta_hour))).strftime("%H:%M")
         if config_data['exclude_namespace'] == "*": #skip
             time.sleep(58)
         elif config_data['scale_down'] == time_now:
