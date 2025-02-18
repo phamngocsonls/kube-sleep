@@ -198,6 +198,9 @@ def main():
     while True:
         with open('./config/config.json', 'r') as file:
             config_data = json.load(file)
+        timedelta_hour = 0
+        if "timedelta_hour" in config_data:
+            timedelta_hour = int(config_data["timedelta_hour"])
         time_now = datetime.now(timezone(timedelta(hours=timedelta_hour))).strftime("%H:%M")
         if config_data['exclude_namespace'] == "*": #skip
             time.sleep(58)
