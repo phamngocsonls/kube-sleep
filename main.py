@@ -188,11 +188,13 @@ def scale_up(config_data):
         total_time = len(hpa_config)*config_data["scale_up_delay"]
         if total_time > config_data['scale_up_timeout']:
             sleep_time = config_data['scale_up_timeout']/len(hpa_config)
-    for i in hpa_config:
+    for i in list(hpa_config.keys()):
         update_hpa_min_replicas(i.split("_")[0],i.split("_")[1],hpa_config[i])
+        del hpa_config[i]
+        add_file_to_configmap('kube-sleep', "kube-sleep", 'hpa.json', str(hpa_config)) #clear config after scale up
         time.sleep(sleep_time)
         total_time+=sleep_time
-    add_file_to_configmap('kube-sleep', "kube-sleep", 'hpa.json', "{}") #clear config after scale up
+    
 
 def main():
     while True:
